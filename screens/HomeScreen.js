@@ -1,18 +1,29 @@
 import { View, Text, SafeAreaView,Image, Alert,StatusBar, TextInput, ScrollView } from 'react-native'
-import React, { useLayoutEffect } from 'react'
+import React, { useEffect, useLayoutEffect,useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import {ChevronDownIcon,UserIcon,AdjustmentsHorizontalIcon,MagnifyingGlassIcon, AdjustmentsVerticalIcon} from 'react-native-heroicons/outline'
 import Categories from '../components/Categories'
+import FeaturedRow from '../components/FeaturedRow'
+import { client as sanityClient } from '../sanity'
 const HomeScreen = () => {
-    
-    const navigation = useNavigation();
+  const navigation = useNavigation();
+    const [featuredCategories,setFeaturedCategories]=useState([]);  
     useLayoutEffect(()=>{
         navigation.setOptions({
             headerShown:false,
         })
     },[])
+
+    useEffect(()=>{
+      sanityClient.fetch(`*[_type == "featured"]{...,restaurants[]->{...,dishes[]->}}`)
+      .then(data=>{
+        console.log(data)
+        setFeaturedCategories(data);
+      })
+      .catch(e=>console.log(e,'ERRO'))
+    },[])
   return (
-    <SafeAreaView className="bg-white" style={{marginTop:StatusBar.currentHeight+7}}>
+    <SafeAreaView className="bg-white flex-1" style={{marginTop:StatusBar.currentHeight+7}}>
       {/* Header */}
       <View className="flex-row items-center mx-4 space-x-2 px-2">
         <Image source={{uri:'https://links.papareact.com/wru'}}
@@ -36,12 +47,19 @@ const HomeScreen = () => {
 
 
       {/* Body */}
-      <ScrollView className="bg-gray-100 ">
+      <ScrollView>
         {/* Categories */}
-        {[1,2,3,4,5,6,7,].map((e)=>(
-            <Categories key={e}/>
-        ))}
+            <Categories />
         {/* Featured rows */}
+        {featuredCategories?.map(category=>(
+          <FeaturedRow
+          key={category._id}
+          id={category._id}
+          title={category.name}
+          description={category.short_description}
+          />
+        ))}
+        
       </ScrollView>
     </SafeAreaView>
 
