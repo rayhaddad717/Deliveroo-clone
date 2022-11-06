@@ -56,8 +56,14 @@ export default {
     {
       name:"dishes",
       type:"array",
-      title:"Disehs",
+      title:"Dishes",
       of:[{ type: "reference", to:[{type:"dish"}] }],
+    },
+    {
+      name:"genre",
+      type:"string",
+      title:"Genre",
+      validation:(Rule)=>Rule.required()
     }
   ],
 

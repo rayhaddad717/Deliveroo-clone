@@ -1,18 +1,22 @@
 import { View, Text, ScrollView } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ArrowRightIcon } from 'react-native-heroicons/outline'
 import RestaurantCard from './RestaurantCard'
 import { client } from '../sanity'
 
-const FeaturedRow = ({id,title,description}) => {
+const FeaturedRow = ({id,title,description,restaurants}) => {
+    // const [restaurants,setRestaurants]=useState([]);
     // useEffect(()=>{
-    //     client.fetch(`*[]`)
-    // },[])
+    //     console.log("USE EFFECT child",id)
+    //     client.fetch(`*[_type == "featured" && _id == $id]{..., restaurants[]->{..., dishes[]->,type->{name}}}[0]`,{id})
+    //     .then(data=>setRestaurants(data?.restaurants))
+    //     .catch(e=>console.log(e))
+    // },[id])
   return (
    <View>
      <View className="mt-4 flex-row items-center justify-between px-4">
       <Text className="font-bold text-lg">{title}</Text>
-      <ArrowRightIcon color="#00CC88"/>
+      <ArrowRightIcon color="#00CCBB"/>
     </View>
     <Text className="text-xs text-gray-500 px-4">{description}</Text>
 
@@ -25,19 +29,19 @@ const FeaturedRow = ({id,title,description}) => {
     clasName="px-4"
     >
         {/* Restaurant Cards */}
-        {[1,2,3].map(e=>(
+        {restaurants.map(resto=>(
             <RestaurantCard 
-            key={e}
-            id={123}
-            imgUrl="https://links.papareact.com/gn7"
-            title="Yo! Sushi"
-            rating={4.5}
-            genre="Japanese"
-            address="123 Main St"
-            short_description="This is a short description"
-            dishes={[]}
-            long={20}
-            lat={0}
+            key={resto._id}
+            id={resto._id}
+            imgUrl={resto.image}
+            title={resto.name}
+            rating={resto.rating}
+            genre={resto.genre}
+            address={resto.address}
+            short_description={resto.short_description}
+            dishes={resto.dishes}
+            long={resto.long}
+            lat={resto.lat}
            />
         ))}
     </ScrollView>

@@ -3,14 +3,14 @@ import React from 'react'
 
 export default function CategoryCard({imageUrl,title}) {
     return (
-    <TouchableOpacity className="relative mr-2">
+    <TouchableOpacity className="relative mr-2 items-center justify-center flex-col">
         <Image source={{
             uri:imageUrl,
         }} 
-        className="h-20 w-20 rounded"/>
-        <Image source={{uri:'https://links.papareact.com/wru'}}
-      />
-      <Text className="absolute bottom-1 left-1 text-white font-bold">{title}h99
+        className="h-32 w-32 rounded"/>
+        {/* <Image source={{uri:'https://links.papareact.com/wru'}} */}
+      {/* /> */}
+      <Text className="text-black text-center font-bold">{title}
       </Text>
     </TouchableOpacity>
   )
