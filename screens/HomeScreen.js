@@ -8,8 +8,9 @@ import {
   TextInput,
   ScrollView,
   RefreshControl,
+  TouchableOpacity,
 } from "react-native";
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
   ChevronDownIcon,
@@ -20,11 +21,15 @@ import {
 } from "react-native-heroicons/outline";
 import Categories from "../components/Categories";
 import FeaturedRow from "../components/FeaturedRow";
-import { client as sanityClient } from "../sanity";
+import { client as sanityClient, urlFor } from "../sanity";
+import Autocomplete from "react-native-autocomplete-input";
+import RestaurantAutocompleteCard from "../components/RestaurantAutocompleteCard";
 const HomeScreen = () => {
   const navigation = useNavigation();
   const [featuredCategories, setFeaturedCategories] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [query, setquery] = useState("");
+  const [filteredRestaurants, setfilteredRestaurants] = useState([]);
   const onRefresh = () => {
     setIsRefreshing(true);
     fetchFeaturedCategories();
@@ -41,6 +46,9 @@ const HomeScreen = () => {
         setIsRefreshing(false);
       });
   };
+  const resetQuery=()=>{
+    setquery('');
+  }
   useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false,
@@ -50,6 +58,24 @@ const HomeScreen = () => {
   useEffect(() => {
     fetchFeaturedCategories();
   }, []);
+  const restaurants = useMemo(() => {
+    let map = new Map();
+    featuredCategories.forEach((cat) => {
+      cat.restaurants.forEach((res) => {
+        if (!map.has(res._id)) map.set(res._id, { ...res });
+      });
+    });
+    return Array.from(map.values());
+  }, [featuredCategories]);
+  useEffect(() => {
+    if (query.trim().length) {
+      setfilteredRestaurants(
+        restaurants.filter((res) => res?.name?.toLowerCase().includes(query.toLowerCase()))
+      );
+    } else {
+      setfilteredRestaurants([]);
+    }
+  }, [query]);
   return (
     <SafeAreaView
       className="bg-white flex-1"
@@ -74,10 +100,22 @@ const HomeScreen = () => {
       <View className="flex-row items-center space-x-2 pb-2 mx-4">
         <View className="flex-row space-x-2 flex-1 bg-gray-200 p-3">
           <MagnifyingGlassIcon color="gray" size={20} />
-          <TextInput
+          {/* <TextInput
             placeholder="Restaurants and cuisines"
             keyboardType="default"
             className="flex-1"
+          /> */}
+          <Autocomplete
+            data={filteredRestaurants}
+            value={query}
+            placeholder="Restaurants and Cuisines"
+            onChangeText={(text) => setquery(text)}
+            flatListProps={{
+              keyExtractor: (restaurant) => restaurant._id,
+              renderItem: ({ item }) => (
+                <RestaurantAutocompleteCard restaurant={item} resetQuery={resetQuery}/>
+              ),
+            }}
           />
         </View>
         <AdjustmentsVerticalIcon color="#00CCBB" />
