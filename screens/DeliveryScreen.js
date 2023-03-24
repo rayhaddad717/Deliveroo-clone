@@ -12,7 +12,7 @@ import { useSelector } from "react-redux";
 import { selectRestaurant } from "../features/restaurantSlice";
 import { XMarkIcon } from "react-native-heroicons/solid";
 import * as Progress from "react-native-progress";
-import MapView ,{Marker} from 'react-native-maps';
+import MapView, { Marker } from "react-native-maps";
 const DeliveryScreen = () => {
   const navigation = useNavigation();
   const restaurant = useSelector(selectRestaurant);
@@ -34,7 +34,10 @@ const DeliveryScreen = () => {
           <View className="flex-row justify-between">
             <View>
               <Text className="text-lg text-gray-400">Estimated Arrival</Text>
-              <Text className="text-3xl font-bold">{Math.floor(Math.random()*29)}-{Math.ceil(Math.random()*29 +29)} Minutes</Text>
+              <Text className="text-3xl font-bold">
+                {Math.floor(Math.random() * 29)}-
+                {Math.ceil(Math.random() * 29 + 29)} Minutes
+              </Text>
             </View>
             <Image
               source={{
@@ -52,7 +55,7 @@ const DeliveryScreen = () => {
       </SafeAreaView>
       <MapView
         initialRegion={{
-        latitude: restaurant.lat,
+          latitude: restaurant.lat,
           longitude: restaurant.long,
           latitudeDelta: 0.005,
           longitudeDelta: 0.005,
@@ -82,8 +85,8 @@ const DeliveryScreen = () => {
           <Text className="text-gray-400">Your Rider</Text>
         </View>
         <TouchableOpacity>
-            <Text className="text-[#00CCBB] text-lg mr-5 font-bold">Call</Text>
-            </TouchableOpacity>
+          <Text className="text-[#00CCBB] text-lg mr-5 font-bold">Call</Text>
+        </TouchableOpacity>
       </SafeAreaView>
     </View>
   );

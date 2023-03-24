@@ -1,4 +1,11 @@
-import { ScrollView, Text, View, Image, TouchableOpacity,StatusBar } from "react-native";
+import {
+  ScrollView,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  StatusBar,
+} from "react-native";
 import React, { useEffect, useLayoutEffect } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -38,11 +45,11 @@ const RestaurantScreen = () => {
   }, []);
   return (
     <>
-      <ScrollView style={{paddingTop:StatusBar.currentHeight+7}}>
+      <ScrollView style={{ paddingTop: StatusBar.currentHeight + 7 }}>
         <View className="relative">
           <Image
             source={{ uri: urlFor(imgUrl).url() }}
-            className="bg-gray-300 p-4 w-64 h-64"
+            className="bg-gray-300 p-4 w-100 h-64"
           />
           <TouchableOpacity
             onPress={navigation.goBack}
@@ -92,7 +99,8 @@ const RestaurantScreen = () => {
               description={dish.short_description}
               price={parseFloat(dish.price)?.toFixed(2)}
               image={dish.image}
-              restaurant={{id,
+              restaurant={{
+                id,
                 imgUrl,
                 title,
                 rating,
@@ -101,7 +109,8 @@ const RestaurantScreen = () => {
                 short_description,
                 dishes,
                 long,
-                lat,}}
+                lat,
+              }}
             />
           ))}
         </View>

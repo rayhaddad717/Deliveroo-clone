@@ -8,7 +8,7 @@ import {
   TextInput,
   ScrollView,
   RefreshControl,
-  TouchableOpacity,
+  StyleSheet,
 } from "react-native";
 import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -30,6 +30,10 @@ const HomeScreen = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [query, setquery] = useState("");
   const [filteredRestaurants, setfilteredRestaurants] = useState([]);
+  const [isFilterFocused, setIsFilterFocused] = useState(false);
+  const toggleFocus = (value) => {
+    setIsFilterFocused(value);
+  };
   const onRefresh = () => {
     setIsRefreshing(true);
     fetchFeaturedCategories();
@@ -46,9 +50,9 @@ const HomeScreen = () => {
         setIsRefreshing(false);
       });
   };
-  const resetQuery=()=>{
-    setquery('');
-  }
+  const resetQuery = () => {
+    setquery("");
+  };
   useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false,
@@ -70,7 +74,9 @@ const HomeScreen = () => {
   useEffect(() => {
     if (query.trim().length) {
       setfilteredRestaurants(
-        restaurants.filter((res) => res?.name?.toLowerCase().includes(query.toLowerCase()))
+        restaurants.filter((res) =>
+          res?.name?.toLowerCase().includes(query.toLowerCase())
+        )
       );
     } else {
       setfilteredRestaurants([]);
@@ -98,8 +104,20 @@ const HomeScreen = () => {
 
       {/* Search */}
       <View className="flex-row items-center space-x-2 pb-2 mx-4">
-        <View className="flex-row space-x-2 flex-1 bg-gray-200 p-3">
-          <MagnifyingGlassIcon color="gray" size={20} />
+        <View
+          className="flex-row space-x-2 flex-1 bg-white p-3"
+          style={[
+            styles.autocompleteContainer,
+            isFilterFocused && styles.autocompleteContainerActive,
+          ]}
+          onFocus={() => toggleFocus(true)}
+          onBlur={() => toggleFocus(false)}
+        >
+          <MagnifyingGlassIcon
+            color="gray"
+            size={20}
+            style={{ marginRight: 7 }}
+          />
           {/* <TextInput
             placeholder="Restaurants and cuisines"
             keyboardType="default"
@@ -110,10 +128,16 @@ const HomeScreen = () => {
             value={query}
             placeholder="Restaurants and Cuisines"
             onChangeText={(text) => setquery(text)}
+            inputContainerStyle={{
+              borderRadius: 10,
+            }}
             flatListProps={{
               keyExtractor: (restaurant) => restaurant._id,
               renderItem: ({ item }) => (
-                <RestaurantAutocompleteCard restaurant={item} resetQuery={resetQuery}/>
+                <RestaurantAutocompleteCard
+                  restaurant={item}
+                  resetQuery={resetQuery}
+                />
               ),
             }}
           />
@@ -143,5 +167,22 @@ const HomeScreen = () => {
     </SafeAreaView>
   );
 };
-
+const styles = StyleSheet.create({
+  autocompleteContainer: {
+    flex: 1,
+    left: 0,
+    position: "absolute",
+    right: 0,
+    top: 0,
+    zIndex: 1,
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  autocompleteContainerActive: {
+    borderWidth: 1,
+    borderColor: "gray",
+    borderRadius: 5,
+    alignItems: "flex-start",
+  },
+});
 export default HomeScreen;
